@@ -50,7 +50,6 @@ export default function RepoForm({ form, setForm, onSubmit, loading }) {
           {loading ? "Analyzing" : "Analyze"}
         </button>
       </div>
-      <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">LLM mode requires backend GROQ_API_KEY. Public repositories work without a GitHub token.</p>
     </form>
   );
 }
