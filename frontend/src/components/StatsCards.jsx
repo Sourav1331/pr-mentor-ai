@@ -23,12 +23,18 @@ export default function StatsCards({ result }) {
       {stats.map((item) => {
         const Icon = iconMap[item.key];
         return (
-          <div key={item.key} className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+          <div key={item.key} className="glass-panel group relative overflow-hidden rounded-lg p-4">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-200/60 to-transparent opacity-70" />
             <div className="flex items-center justify-between gap-3">
-              <p className="text-sm text-slate-500 dark:text-slate-400">{item.label}</p>
-              <Icon size={18} className="text-emerald-600" />
+              <p className="text-sm text-slate-400">{item.label}</p>
+              <span className="rounded-lg border border-teal-200/20 bg-teal-300/10 p-2 text-teal-200">
+                <Icon size={18} />
+              </span>
             </div>
-            <p className="mt-3 text-3xl font-semibold text-slate-950 dark:text-white">{item.value}</p>
+            <p className="mt-3 text-3xl font-semibold text-white">{item.value}</p>
+            <div className="mt-3 h-1 rounded-full bg-stone-800">
+              <div className="h-1 w-2/3 rounded-full bg-gradient-to-r from-teal-500 to-emerald-300" />
+            </div>
           </div>
         );
       })}
