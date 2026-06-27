@@ -4,5 +4,6 @@ python-dotenv
 pydantic
 pydantic-settings
 requests
-httpx
 groq
+# groq versions that pass proxies= into httpx need the pre-0.28 client API.
+httpx<0.28
