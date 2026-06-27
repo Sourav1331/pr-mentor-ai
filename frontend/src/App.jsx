@@ -8,7 +8,9 @@ import Header from "./components/Header";
 import LoadingState from "./components/LoadingState";
 import PRCard from "./components/PRCard";
 import RepoForm from "./components/RepoForm";
+import RepoMarqueeBackground from "./components/RepoMarqueeBackground";
 import StatsCards from "./components/StatsCards";
+import { MoveDown } from "./icons";
 
 const initialFilters = {
   search: "",
@@ -28,6 +30,8 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [theme, setTheme] = useState("dark");
+  const [showScanHint, setShowScanHint] = useState(false);
 
   const availableTags = useMemo(() => {
     const tags = new Set();
@@ -66,14 +70,19 @@ export default function App() {
     }
   };
 
+  const handleScanHint = () => {
+    setShowScanHint(false);
+    window.setTimeout(() => setShowScanHint(true), 20);
+    window.setTimeout(() => setShowScanHint(false), 3400);
+  };
+
   return (
-    <div className="dark">
+    <div className={theme}>
       <div className="app-shell relative min-h-screen overflow-hidden text-slate-100">
+        <RepoMarqueeBackground />
         <div className="ambient-field pointer-events-none absolute inset-0" />
-        <div className="ambient-orbit ambient-orbit-a pointer-events-none absolute" />
-        <div className="ambient-orbit ambient-orbit-b pointer-events-none absolute" />
         <div className="scanline pointer-events-none absolute inset-x-0 top-0 h-24" />
-        <Header />
+        <Header theme={theme} setTheme={setTheme} onScanHint={handleScanHint} />
         <main className="relative mx-auto flex max-w-7xl flex-col gap-8 px-4 pb-10 pt-12 lg:px-8">
           <section className="hero-minimal mx-auto flex min-h-[520px] w-full max-w-5xl flex-col items-center justify-center px-2 text-center">
             <div className="mb-7 flex h-20 w-20 items-center justify-center rounded-full border border-teal-200/25 bg-teal-300/10 text-teal-100 shadow-glow">
@@ -86,6 +95,7 @@ export default function App() {
               Decode any public GitHub repository's open pull requests. Reveal summaries, risks, learning tags, tests, docs, and maintainer review guidance in one sleek console.
             </p>
             <div className="mt-10 w-full max-w-3xl">
+              {showScanHint && <ScanHint />}
               <RepoForm form={form} setForm={setForm} onSubmit={handleSubmit} loading={loading} />
             </div>
             <div className="mt-8 grid w-full max-w-3xl grid-cols-1 gap-3 text-left sm:grid-cols-3">
@@ -103,9 +113,7 @@ export default function App() {
                     <p className="text-xs font-semibold uppercase tracking-[0.22em] text-teal-200">What You Get</p>
                     <h2 className="mt-2 text-2xl font-semibold text-white">A maintainer-grade PR briefing</h2>
                   </div>
-                  <div className="hidden rounded-full border border-teal-200/20 bg-teal-300/10 px-3 py-1 text-xs text-teal-100 sm:block">
-                    no paid key required
-                  </div>
+                  
                 </div>
                 <div className="mt-5 grid gap-3 sm:grid-cols-2">
                   <FeatureCard title="Beginner explanation" text="Turns complex pull requests into plain-language learning notes." />
@@ -118,7 +126,6 @@ export default function App() {
               <div className="glass-panel overflow-hidden rounded-2xl p-5">
                 <div className="mb-4 flex items-center justify-between">
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-teal-200">Preview Signal</p>
-                  <span className="rounded-full bg-teal-300/10 px-3 py-1 text-xs text-teal-100">rule-based</span>
                 </div>
                 <div className="space-y-4">
                   <SignalRow label="Risk scan" value="security, database, CI/CD, large diff" width="w-10/12" />
@@ -181,9 +188,24 @@ export default function App() {
   );
 }
 
+function ScanHint() {
+  return (
+    <div className="scan-hint pointer-events-none absolute left-1/2 z-20 hidden -translate-x-1/2 lg:block">
+      <div className="scan-hint__bubble">
+        <span className="scan-hint__cursor"><MoveDown size={15} /></span>
+        <span className="scan-hint__copy">
+          <strong>this way</strong>
+          <small>the PRs are hiding here</small>
+        </span>
+      </div>
+      <div className="scan-hint__line" />
+    </div>
+  );
+}
+
 function MiniMetric({ label, value }) {
   return (
-    <div className="rounded-lg border border-teal-200/10 bg-stone-950/50 p-3">
+    <div className="rounded-lg border border-teal-100/10 bg-stone-950/60 p-3 shadow-soft-panel backdrop-blur-md">
       <p className="text-[10px] uppercase tracking-[0.2em] text-stone-500">{label}</p>
       <p className="mt-1 text-lg font-semibold text-teal-100">{value}</p>
     </div>
