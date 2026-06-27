@@ -10,6 +10,7 @@ export { default as Github } from "lucide-react/dist/esm/icons/github.js";
 export { default as GitBranch } from "lucide-react/dist/esm/icons/git-branch.js";
 export { default as GitPullRequestArrow } from "lucide-react/dist/esm/icons/git-pull-request-arrow.js";
 export { default as Moon } from "lucide-react/dist/esm/icons/moon.js";
+export { default as MoveDown } from "lucide-react/dist/esm/icons/move-down.js";
 export { default as SearchX } from "lucide-react/dist/esm/icons/search-x.js";
 export { default as ShieldAlert } from "lucide-react/dist/esm/icons/shield-alert.js";
 export { default as Sparkles } from "lucide-react/dist/esm/icons/sparkles.js";
