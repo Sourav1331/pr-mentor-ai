@@ -54,7 +54,7 @@ async def analyze_prs(
 ) -> AnalyzeResponse:
     owner, repo = parse_github_repo_url(str(payload.repo_url))
     github = GitHubClient(settings)
-    llm = LLMEngine(settings)
+    llm = LLMEngine(settings) if payload.use_llm else None
 
     pull_requests = await github.fetch_open_pull_requests(owner, repo, payload.max_prs)
     analyses = []
@@ -63,7 +63,7 @@ async def analyze_prs(
         details = await github.fetch_pull_request_details(owner, repo, number)
         files = await github.fetch_pull_request_files(owner, repo, number)
         analysis = analyze_pull_request(details, files)
-        if payload.use_llm:
+        if llm is not None:
             analysis = await llm.improve_analysis(analysis)
         analyses.append(analysis)
 
