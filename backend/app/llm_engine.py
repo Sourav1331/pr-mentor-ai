@@ -10,7 +10,13 @@ class LLMEngine:
     def __init__(self, settings: Settings):
         self.settings = settings
         self.enabled = bool(settings.groq_api_key)
-        self.client = Groq(api_key=settings.groq_api_key) if self.enabled else None
+        self.client = None
+        if self.enabled:
+            try:
+                self.client = Groq(api_key=settings.groq_api_key)
+            except Exception as exc:
+                print(f"Groq client disabled: {exc}")
+                self.enabled = False
 
     async def improve_analysis(self, analysis: PullRequestAnalysis) -> PullRequestAnalysis:
         if not self.enabled or self.client is None:
