@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 
 import { analyzePullRequests } from "./api";
 import EmptyState from "./components/EmptyState";
@@ -32,6 +32,7 @@ export default function App() {
   const [error, setError] = useState("");
   const [theme, setTheme] = useState("dark");
   const [showScanHint, setShowScanHint] = useState(false);
+  const resultsRef = useRef(null);
 
   const availableTags = useMemo(() => {
     const tags = new Set();
@@ -59,6 +60,15 @@ export default function App() {
     setError("");
     setResult(null);
     setFilters(initialFilters);
+    window.setTimeout(() => {
+      const resultsTop = resultsRef.current?.getBoundingClientRect().top;
+      if (typeof resultsTop !== "number") return;
+
+      window.scrollTo({
+        top: window.scrollY + resultsTop - 96,
+        behavior: "auto"
+      });
+    }, 0);
 
     try {
       const data = await analyzePullRequests(form);
@@ -126,7 +136,7 @@ export default function App() {
               <div className="glass-panel overflow-hidden rounded-2xl p-5">
                 <div className="mb-4 flex items-center justify-between">
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-teal-200">Preview Signal</p>
-                </div>
+cd                 </div>
                 <div className="space-y-4">
                   <SignalRow label="Risk scan" value="security, database, CI/CD, large diff" width="w-10/12" />
                   <SignalRow label="Learning tags" value="backend, frontend, tests, docs" width="w-8/12" />
@@ -144,44 +154,46 @@ export default function App() {
               </div>
             </section>
           )}
-          <ErrorState message={error} />
+          <section ref={resultsRef} className="scroll-mt-24">
+            <ErrorState message={error} />
 
-          {loading && <LoadingState />}
+            {loading && <LoadingState />}
 
-          {!loading && !result && !error && (
-            <EmptyState
-              title="Analyze a public repository"
-              message="Enter a GitHub repository URL to fetch open PRs and generate review guidance."
-            />
-          )}
+            {!loading && !result && !error && (
+              <EmptyState
+                title="Analyze a public repository"
+                message="Enter a GitHub repository URL to fetch open PRs and generate review guidance."
+              />
+            )}
 
-          {!loading && result && (
-            <>
-              <div className="glass-panel flex flex-col gap-2 rounded-lg p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-teal-200">Repository Signal</p>
-                <h2 className="text-2xl font-semibold text-white">{result.repo}</h2>
-                <p className="text-sm text-stone-400">Live pull request intelligence from the GitHub REST API.</p>
+            {!loading && result && (
+              <div className="flex flex-col gap-8">
+                <div className="glass-panel flex flex-col gap-2 rounded-lg p-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-teal-200">Repository Signal</p>
+                  <h2 className="text-2xl font-semibold text-white">{result.repo}</h2>
+                  <p className="text-sm text-stone-400">Live pull request intelligence from the GitHub REST API.</p>
+                </div>
+                <StatsCards result={result} />
+
+                {result.total_prs > 0 ? (
+                  <>
+                    <Filters filters={filters} setFilters={setFilters} availableTags={availableTags} />
+                    {filteredPullRequests.length > 0 ? (
+                      <section className="space-y-4">
+                        {filteredPullRequests.map((pr) => (
+                          <PRCard key={pr.number} pr={pr} />
+                        ))}
+                      </section>
+                    ) : (
+                      <EmptyState title="No PRs match these filters" message="Adjust search, difficulty, size, tag, or tests filters." />
+                    )}
+                  </>
+                ) : (
+                  <EmptyState title="No open pull requests" message="This repository does not currently have open PRs." />
+                )}
               </div>
-              <StatsCards result={result} />
-
-              {result.total_prs > 0 ? (
-                <>
-                  <Filters filters={filters} setFilters={setFilters} availableTags={availableTags} />
-                  {filteredPullRequests.length > 0 ? (
-                    <section className="space-y-4">
-                      {filteredPullRequests.map((pr) => (
-                        <PRCard key={pr.number} pr={pr} />
-                      ))}
-                    </section>
-                  ) : (
-                    <EmptyState title="No PRs match these filters" message="Adjust search, difficulty, size, tag, or tests filters." />
-                  )}
-                </>
-              ) : (
-                <EmptyState title="No open pull requests" message="This repository does not currently have open PRs." />
-              )}
-            </>
-          )}
+            )}
+          </section>
         </main>
       </div>
     </div>
