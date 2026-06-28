@@ -4,7 +4,6 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React-Frontend-61DAFB?logo=react&logoColor=111827)
 ![GitHub API](https://img.shields.io/badge/GitHub-REST%20API-181717?logo=github&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green)
 
 AI-powered GitHub API tool that explains pull requests, reviews changes, and helps beginners learn open-source contribution.
 
@@ -228,7 +227,3 @@ PR Mentor AI is a developer tool built on top of the GitHub REST API. It fetches
 - Add repository history trends for maintainer dashboards.
 - Cache GitHub responses to reduce rate-limit pressure.
 - Add automated tests for analyzer edge cases and API error handling.
-
-## License
-
-MIT License. See [LICENSE](LICENSE).
